@@ -192,6 +192,39 @@
   dialog li{margin-bottom:8px}
   dialog li img{width:26px;height:26px;vertical-align:-7px;margin-inline-end:4px}
 
+
+  /* ---------- אולם החקירה ---------- */
+  .hall-doors{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+  .door .arch svg{width:66%;height:auto}
+  .door.add .arch{border-style:dashed;border-color:var(--bordo)}
+  .door.add .tag{color:var(--bordo)}
+  .door.exit .arch{border-color:var(--bordo);box-shadow:0 0 0 7px rgba(131,32,88,.14)}
+  .door.exit .tag{color:var(--bordo)}
+  .door.done .tag .m{font-size:20px;font-weight:700}
+  .add-form{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:22px;padding:16px 18px;border:1.5px dashed var(--bordo);border-radius:16px;background:#fff}
+  .add-form label{font-weight:700;color:var(--bordo)}
+  .add-form input{width:90px;font:700 26px var(--math);text-align:center;border:2px solid var(--border);border-radius:12px;padding:6px;color:var(--blue)}
+  .add-msg{color:var(--bordo);font-weight:600}
+  .add-note{flex-basis:100%;margin:0;font-size:16px;color:var(--line)}
+  /* מנעול קוד */
+  .options:has(.lock){display:block}
+  .lock{display:grid;grid-template-columns:72px 1fr;grid-template-areas:"art label" "art row" "btn btn";gap:6px 14px;align-items:center;padding:14px 16px;border-radius:16px;background:linear-gradient(#f9fafc,#eef1f5);border:3px solid var(--blue)}
+  .lock-art{grid-area:art} .lock-art svg,.lock>svg{width:72px;height:72px;display:block}
+  .lock-label{grid-area:label;font-weight:700;color:var(--blue)}
+  .lock-row{grid-area:row;display:flex;align-items:center;gap:4px;justify-content:flex-end}
+  .lock-in{width:100%;max-width:170px;font:700 32px var(--math);letter-spacing:.12em;text-align:center;border:2px solid var(--blue);border-radius:12px;padding:6px 8px;background:#fff;color:var(--blue)}
+  .lock-in:focus{outline:3px solid rgba(131,32,88,.35);outline-offset:2px}
+  .lock-deg{font:700 32px var(--math)}
+  .lock-btn{grid-area:btn;width:100%}
+  .lock.open{border-color:var(--green);background:rgba(109,181,128,.12)}
+  .lock.open .lock-in{border-color:var(--green)}
+  div.lock.open:not(#lock){display:flex;align-items:center;gap:16px}
+  .lock-code{font-size:34px;font-weight:700}
+  .lock.shake{animation:shake .35s}
+  .tchip{width:30px;height:26px;animation:pop .3s ease}
+  .cut-tools{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;font-size:16px;color:var(--line);margin-top:4px}
+  .link-btn{background:none;border:0;color:var(--bordo);font:600 16px var(--ui);text-decoration:underline;cursor:pointer;padding:4px}
+  .log-title{color:var(--bordo);font-weight:700;font-size:20px}
   @media (max-width:900px){
     .room{grid-template-columns:1fr}
     .gallery{order:-1}
@@ -313,7 +346,6 @@
         <text x="218" y="169" text-anchor="middle" font-family="Simpler Pro, Arial" font-weight="700" font-size="17" fill="#17365e" direction="rtl">מוזיאון המצולעים</text>
         <path d="M64 148 L218 76 L372 148 Z" fill="#f6e3c1" stroke="#17365e" stroke-width="2.4" stroke-linejoin="round"/>
         <polygon points="218,98 236,108 236,128 218,138 200,128 200,108" fill="#fff" stroke="#832058" stroke-width="2.4"/>
-        <path d="M218 98 L218 138 M200 108 L236 128 M236 108 L200 128" stroke="#832058" stroke-width="1.6" opacity=".55"/>
         <!-- עקבות -->
         <g fill="#6f7f8f" opacity=".45">
           <ellipse cx="270" cy="348" rx="7" ry="4"/><ellipse cx="300" cy="358" rx="7" ry="4"/>
@@ -336,6 +368,21 @@
   </div>
 </section>
 
+<!-- ===== אולם החקירה (אגף 1): מוצגים בסדר חופשי ===== -->
+<section class="screen" id="hallScreen" hidden>
+  <div class="card map hall">
+    <div class="map-head"><img data-asset="icons.levels" alt=""><div><h2>אגף החקירה</h2><p id="hallText"></p></div></div>
+    <div class="doors hall-doors" id="hallDoors"></div>
+    <form class="add-form" id="addForm" hidden>
+      <label for="addN">מצולע לבחירתכם – כמה צלעות?</label>
+      <input id="addN" inputmode="numeric" autocomplete="off" maxlength="2" dir="ltr">
+      <button class="btn" type="submit">יוצרים מוצג</button>
+      <span class="add-msg" id="addMsg" role="status"></span>
+      <p class="add-note">עד 15 צלעות המוצג מצויר וחותכים אותו. מוצג גדול יותר לא מצויר – מחשבים.</p>
+    </form>
+  </div>
+</section>
+
 <!-- ===== חדר משחק ===== -->
 <section class="screen" id="gameScreen" hidden>
   <div class="room">
@@ -349,7 +396,6 @@
       <div class="options" id="options"></div>
       <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
       <div class="panel-foot">
-        <button class="hint-btn" id="hintBtn" type="button"><img data-asset="icons.hint" alt="">רמז</button>
         <button class="btn next-btn" id="nextBtn" type="button" hidden><span id="nextLbl">לחדר הבא</span><img data-asset="icons.forward" alt=""></button>
       </div>
     </aside>
@@ -387,12 +433,12 @@
 
 <dialog id="helpDlg" aria-labelledby="helpTitle">
   <h2 id="helpTitle">איך משחקים?</h2>
-  <p>במוזיאון ארבעה אגפים, ובכל אגף כמה חדרים. בכל חדר יש משימה: חותכים מצולע למשולשים, פותחים כספות, משחזרים זווית שנגנבה או מגלים איזה מצולע מסתתר. מסיימים אגף – נפתחת הדלת הבאה.</p>
+  <p>במוזיאון ארבעה אגפים. באגף הראשון, <b>אגף החקירה</b>, בוחרים מוצגים בכל סדר, חותכים אותם למשולשים בכל דרך שרוצים, וגלו כמה מעלות יש בכל מוצג. אפשר גם להוסיף מוצג לבחירתכם.</p>
+  <p>כל חדר נפתח ב<b>מנעול</b>: הקוד הוא סכום הזוויות שגיליתם. אחרי שלושה מוצגים נפתחת דלת היציאה – ולה מנעול משלה.</p>
   <ul>
-    <li><img data-asset="icons.heart" alt="">בכל אגף מתחילים עם <b>3 לבבות</b>. תשובה שגויה מורידה לב ומאפשרת לנסות שוב. כשנגמרים הלבבות, האגף מתחיל מחדש עם מוצגים חדשים.</li>
-    <li><img data-asset="icons.coin" alt="">כל תשובה נכונה בניסיון הראשון, בלי רמז, מוסיפה <b>מטבע</b>.</li>
+    <li><img data-asset="icons.heart" alt="">באגף החקירה אין לבבות – חוקרים בחופשיות. באגפים האחרים מתחילים עם <b>3 לבבות</b>; טעות מורידה לב, וכשנגמרים הלבבות האגף מתחיל מחדש.</li>
+    <li><img data-asset="icons.coin" alt="">כל תשובה נכונה בניסיון הראשון מוסיפה <b>מטבע</b>.</li>
     <li><img data-asset="icons.streak" alt=""><b>רצף</b> סופר תשובות נכונות ברצף. שגיאה מאפסת אותו.</li>
-    <li><img data-asset="icons.hint" alt="">כפתור <b>הרמז</b> עוזר כשנתקעים. אחרי רמז התשובה עדיין נחשבת, אבל בלי מטבע.</li>
     <li><img data-asset="icons.star" alt="">בסוף המשחק מקבלים עד 3 <b>כוכבים</b> לפי חלק המטבעות שנאספו.</li>
   </ul>
   <p>את הצליל אפשר להשתיק בכפתור הרמקול. המשחק עובד גם בלי צליל.</p>
@@ -441,7 +487,7 @@ const ASSET_DECISIONS = [
   const $ = id => document.getElementById(id);
   const NS = "http://www.w3.org/2000/svg";
   const TAU = Math.PI * 2, DEG = 180 / Math.PI;
-  const LETTERS = "ABCDEFGHIJKL";
+  const LETTERS = "ABCDEFGHIJKLMNO";
   const TRI = [ {c:"#6db580",t:"#17365e"}, {c:"#e7b976",t:"#17365e"}, {c:"#832058",t:"#fff"}, {c:"#17365e",t:"#fff"}, {c:"#6f7f8f",t:"#fff"} ];
   const ANG = '<svg class="ang" aria-hidden="true"><use href="#angSign"/></svg>';
   const rnd = (a,b) => a + Math.floor(Math.random()*(b-a+1));
@@ -580,14 +626,14 @@ const ASSET_DECISIONS = [
   function cur(){ return S.tasks[S.ti]; }
 
   function show(id){
-    ['startScreen','mapScreen','gameScreen','endScreen'].forEach(s => $(s).hidden = s!==id);
+    ['startScreen','mapScreen','hallScreen','gameScreen','endScreen'].forEach(s => $(s).hidden = s!==id);
     $('homeBtn').hidden = id==='startScreen';
-    document.body.classList.toggle('playing', id==='gameScreen' || id==='mapScreen');
+    document.body.classList.toggle('playing', id==='gameScreen' || id==='mapScreen' || id==='hallScreen');
     updateStats();
     window.scrollTo({top:0});
   }
   function updateStats(bumpId){
-    const on = !!S && !$('gameScreen').hidden;
+    const on = !!S && !$('gameScreen').hidden && S.wing!==0;
     $('heartsStat').hidden = !on;
     $('coinsStat').hidden = !S || $('startScreen').hidden===false;
     $('streakStat').hidden = !on;
@@ -597,8 +643,9 @@ const ASSET_DECISIONS = [
   }
 
   /* ---------- בניית המשימות לכל אגף ---------- */
+  // אגף 1 (חקירה) נבנה כאולם עם דלתות בסדר חופשי – ראו showHall
+  function cutRoom(n){ return { type:'cut', n, base: n<=15 ? makeConvex(n) : regular(n), diags:new Set(), phase: (n<=15 && n>3) ? 'cut' : 'ask', drawn: n<=15, tries:0, sel:null }; }
   function buildWing(w){
-    if (w===0) return [4,5,6,7].map(n=>({type:'cut', n, base:makeConvex(n), diags:new Set(), phase:'cut'})).concat([{type:'pattern', step:1}]);
     if (w===1) return [matchTask('shape'), matchTask('text'), trapTask()];
     if (w===2) return [missingTask(4,false), missingTask(5,false), missingTask(6,false), missingTask(rnd(5,6),true)];
     const r1=pick([5,6]), r2=pick([8,10]);
@@ -623,30 +670,78 @@ const ASSET_DECISIONS = [
     const sum=(n-2)*180;
     const vals=roundAngles(base.map((_,i)=>angAt(base,i).size*DEG), sum);
     const miss=rnd(0,n-1);
-    return { type:'missing', n, base, reflex, vals, sum, miss, step:1, showFan:false, done:false, fanFrom: reflex>=0 ? reflex : 0 };
+    return { type:'missing', n, base, reflex, vals, sum, miss, step:1, done:false };
   }
 
   /* ---------- כניסה לאגף ---------- */
   function startGame(){
-    S = { done:[false,false,false,false], coins:0, maxCoins:0, streak:0, best:0, rows:[], wing:0, tasks:[], ti:0, hearts:3, failed:false };
+    S = { done:[false,false,false,false], coins:0, maxCoins:0, streak:0, best:0, wing:0, tasks:[], ti:0, hearts:3, failed:false, hall:null };
     showMap();
   }
   function enterWing(w){
-    S.wing=w; S.tasks=buildWing(w); S.ti=0; S.hearts=3; S.failed=false;
-    if (w===0) S.rows=[];
+    S.wing=w; S.failed=false; S.hearts=3;
+    if (w===0){ if (!S.hall) S.hall={ rooms:[4,5,6,7].map(cutRoom), rule:null }; showHall(); return; }
+    S.tasks=buildWing(w); S.ti=0;
     show('gameScreen'); renderTask();
+  }
+  function enterRoom(t){ S.tasks=[t]; S.ti=0; show('gameScreen'); renderTask(); }
+
+  /* ---------- אולם החקירה (אגף 1) ---------- */
+  const NEED = 3; // מספר המוצגים שצריך לחקור לפני שדלת היציאה נפתחת
+  const hallDone = () => S.hall.rooms.filter(r=>r.phase==='done');
+  function hallDoorArt(r){
+    if (!r.drawn) return `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="34" fill="#fff" stroke="#17365e" stroke-width="3" stroke-dasharray="2 5"/><text x="50" y="58" text-anchor="middle" font-family="Times New Roman" font-weight="700" font-size="26" fill="#17365e">${r.n}</text></svg>`;
+    return miniPoly(r.base, 100, 100);
+  }
+  function padlockSvg(open){
+    return `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M32 46 V32 A18 18 0 0 1 68 32 ${open?'V22':'V46'}" fill="none" stroke="#17365e" stroke-width="7" stroke-linecap="round" ${open?'transform="translate(14 -8)"':''}/><rect x="22" y="44" width="56" height="44" rx="9" fill="#e7b976" stroke="#17365e" stroke-width="3.5"/><circle cx="50" cy="62" r="6" fill="#17365e"/><rect x="47" y="64" width="6" height="13" rx="3" fill="#17365e"/></svg>`;
+  }
+  function showHall(){
+    const H=S.hall, nd=hallDone().length, ready=nd>=NEED;
+    $('hallText').textContent = ready
+      ? 'חקרתם מספיק מוצגים – דלת היציאה מוכנה. אפשר להמשיך לחקור או לפתוח את המנעול.'
+      : `בחרו מוצג בכל סדר שתרצו, חתכו אותו למשולשים וגלו כמה מעלות יש בו. אחרי ${NEED} מוצגים תיפתח דלת היציאה (חקרתם ${nd}).`;
+    const doors = H.rooms.map((r,i)=>{
+      const done=r.phase==='done';
+      const tag = done ? `<img src="${ASSETS.icons.star}" alt=""><span class="m">${(r.n-2)*180}°</span>` : 'כניסה';
+      return `<button class="door ${done?'done':'current'}" type="button" data-r="${i}" aria-label="${done?`מוצג ${i+1}, נפתח: ${(r.n-2)*180} מעלות`:`מוצג ${i+1}, כניסה`}"><div class="arch">${hallDoorArt(r)}</div><div class="tag">${tag}</div></button>`;
+    });
+    doors.push(`<button class="door add" type="button" id="addDoor" aria-label="הוספת מצולע לבחירתכם"><div class="arch"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="30" fill="#fff" stroke="#832058" stroke-width="3" stroke-dasharray="4 6"/><path d="M50 36 V64 M36 50 H64" stroke="#832058" stroke-width="5" stroke-linecap="round"/></svg></div><div class="tag">מצולע לבחירתכם</div></button>`);
+    doors.push(`<button class="door ${ready?'current exit':'locked'}" type="button" id="exitDoor" ${ready?'':'aria-disabled="true"'} aria-label="${ready?'דלת היציאה – מנעול':'דלת היציאה, נעולה'}"><div class="arch">${padlockSvg(false)}</div><div class="tag">${ready?'דלת היציאה':`נעול (${nd}/${NEED})`}</div></button>`);
+    $('hallDoors').innerHTML=doors.join('');
+    $('addForm').hidden=true;
+    show('hallScreen');
+  }
+  $('hallDoors').addEventListener('click', e=>{
+    const d=e.target.closest('.door'); if(!d) return;
+    if (d.id==='addDoor'){ $('addForm').hidden=false; $('addN').focus(); return; }
+    if (d.id==='exitDoor'){ if (hallDone().length<NEED) return; if(!S.hall.rule) S.hall.rule=ruleTask(); enterRoom(S.hall.rule); return; }
+    const r=S.hall.rooms[+d.dataset.r]; if (r) enterRoom(r);
+  });
+  $('addForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    const n=parseInt(String($('addN').value).replace(/[^\d]/g,''),10);
+    if (!(n>=3 && n<=40)){ $('addMsg').textContent='בחרו מספר צלעות בין 3 ל־40.'; return; }
+    if (S.hall.rooms.some(r=>r.n===n)){ $('addMsg').textContent=`כבר יש מוצג בעל ${n} צלעות.`; return; }
+    $('addMsg').textContent='';
+    const r=cutRoom(n); S.hall.rooms.push(r); $('addN').value=''; enterRoom(r);
+  });
+  function ruleTask(){
+    const have=new Set(S.hall.rooms.map(r=>r.n));
+    const m=[10,11,9,12,13,14].find(k=>!have.has(k)) || 16;
+    return { type:'pattern', m, step:1, tries:0 };
   }
 
   /* ---------- מפה ---------- */
   const MAP_TEXT = [
-    ['המוזיאון בלילה', 'הגנב השאיר עקבות ליד הדלת הראשונה. היכנסו והתחילו לחקור.'],
+    ['המוזיאון בלילה', 'הגנב השאיר עקבות ליד הדלת הראשונה – אגף החקירה. היכנסו והתחילו לחקור.'],
     ['גיליתם את הסוד של המצולעים!', 'עכשיו אתם יודעים כמה מעלות יש בכל מצולע. העקבות ממשיכות אל הדלת הבאה.'],
     ['הכספות נפתחו!', 'הגנב ברח אל אגף המוצגים, ובכל מוצג חסרה זווית.'],
     ['כמעט תפסתם אותו!', 'הגנב מסתתר באגף האחרון, בין המצולעים המשוכללים.'],
   ];
   function emblem(i){
     const st='fill="none" stroke-linejoin="round" stroke-linecap="round"';
-    if (i===0) return `<svg viewBox="0 0 100 100"><polygon points="50,12 86,32 86,70 50,90 14,70 14,32" fill="#fff" stroke="#17365e" stroke-width="3"/><path d="M50 12 L86 70 M50 12 L50 90 M50 12 L14 70" stroke="#832058" stroke-width="2.4" ${st}/><polygon points="50,12 86,32 86,70" fill="#6db580" opacity=".3"/><polygon points="50,12 14,70 14,32" fill="#e7b976" opacity=".45"/></svg>`;
+    if (i===0) return `<svg viewBox="0 0 100 100"><circle cx="44" cy="44" r="24" fill="#fff" stroke="#17365e" stroke-width="5"/><path d="M62 62 L84 84" stroke="#17365e" stroke-width="8" stroke-linecap="round"/><path d="M34 52 L44 34 L56 50 Z" fill="none" stroke="#832058" stroke-width="3" stroke-linejoin="round"/></svg>`;
     if (i===1) return `<svg viewBox="0 0 100 100"><rect x="14" y="14" width="72" height="72" rx="10" fill="#fff" stroke="#17365e" stroke-width="3"/><circle cx="50" cy="50" r="20" ${st} stroke="#17365e" stroke-width="3"/><circle cx="50" cy="50" r="4" fill="#17365e"/><path d="M50 30 V36 M70 50 H64 M50 70 V64 M30 50 H36" stroke="#832058" stroke-width="3" ${st}/></svg>`;
     if (i===2) return `<svg viewBox="0 0 100 100"><polygon points="50,14 86,40 72,84 28,84 14,40" fill="#fff" stroke="#17365e" stroke-width="3"/><path d="M42 84 A14 14 0 0 0 23.8 70.7" stroke="#832058" stroke-width="3" stroke-dasharray="3 5" ${st}/><text x="38" y="76" font-family="Times New Roman" font-weight="700" font-size="18" fill="#832058" text-anchor="middle">?</text></svg>`;
     return `<svg viewBox="0 0 100 100"><polygon points="36,12 64,12 88,36 88,64 64,88 36,88 12,64 12,36" fill="#fff" stroke="#17365e" stroke-width="3"/><g stroke="#6db580" stroke-width="3" ${st}><path d="M45 12 A9 9 0 0 1 29.6 18.4"/><path d="M88 45 A9 9 0 0 1 81.6 29.6"/><path d="M55 88 A9 9 0 0 1 70.4 81.6"/><path d="M12 55 A9 9 0 0 1 18.4 70.4"/></g></svg>`;
@@ -683,9 +778,9 @@ const ASSET_DECISIONS = [
   const deg = v => `${v}°`;
   const nums = list => [...new Set(list)];
 
-  function newStep(){ S.stepMistake=false; S.stepHint=false; }
+  function newStep(){ S.stepMistake=false; }
   function success(html, clean){
-    if (clean===undefined) clean = !S.stepMistake && !S.stepHint;
+    if (clean===undefined) clean = !S.stepMistake;
     S.maxCoins++;
     if (clean){ S.coins++; updateStats('coinsStat'); }
     S.streak++; S.best=Math.max(S.best,S.streak);
@@ -694,48 +789,43 @@ const ASSET_DECISIONS = [
     setFeedback('ok', html);
   }
   function fail(html){
-    S.stepMistake=true; S.hearts--; S.streak=0;
-    updateStats('heartsStat');
+    S.stepMistake=true; S.streak=0;
+    if (S.wing!==0){ S.hearts--; updateStats('heartsStat'); } else updateStats();
     play('error');
-    if (S.hearts<=0){
+    if (S.wing!==0 && S.hearts<=0){
       S.failed=true;
       setFeedback('bad', html + '<br>נגמרו הלבבות – השומר הבחין בכם. האגף יתחיל מחדש עם מוצגים חדשים.');
       $('options').querySelectorAll('.opt').forEach(o=>o.disabled=true);
-      $('hintBtn').disabled=true;
       $('nextLbl').textContent='מתחילים את האגף מחדש';
       $('nextBtn').querySelector('img').src=ASSETS.icons.restart;
       $('nextBtn').hidden=false; $('nextBtn').focus({preventScroll:true});
       const st=$('stage'); st.style.pointerEvents='none';
+      $('lockIn') && ($('lockIn').disabled=true, $('lockBtn').disabled=true);
     } else setFeedback('bad', html);
   }
   function taskDone(){
     const last = S.ti===S.tasks.length-1;
-    $('nextLbl').textContent = last ? 'יציאה מהאגף' : 'לחדר הבא';
+    $('nextLbl').textContent = S.wing===0 ? (cur().type==='pattern' ? 'יציאה מהאגף' : 'חזרה לאולם') : last ? 'יציאה מהאגף' : 'לחדר הבא';
     $('nextBtn').querySelector('img').src=ASSETS.icons.forward;
-    $('nextBtn').hidden=false; $('hintBtn').disabled=true;
+    $('nextBtn').hidden=false;
     $('nextBtn').focus({preventScroll:true});
   }
   function info(html){ setFeedback('info', html); }
 
   $('nextBtn').addEventListener('click', ()=>{
     if (S.failed){ enterWing(S.wing); return; }
+    if (S.wing===0 && cur().type==='cut'){ showHall(); return; }
     if (S.ti < S.tasks.length-1){ S.ti++; renderTask(); return; }
     S.done[S.wing]=true;
     if (S.done.every(Boolean)) finish(); else showMap();
   });
-  $('hintBtn').addEventListener('click', ()=>{
-    const t=cur(); const h=hintFor(t); if(!h) return;
-    S.stepHint=true;
-    if (t.type==='missing' && t.step===1){ t.showFan=true; drawStage(); }
-    info(h);
-  });
-
   function renderTask(){
     const t=cur(); newStep();
     $('stage').style.pointerEvents='';
-    $('roomsBar').innerHTML = S.tasks.map((_,k)=>`<span class="${k<S.ti?'done':k===S.ti?'now':''}"></span>`).join('');
-    $('roomCount').textContent = `חדר ${S.ti+1} מתוך ${S.tasks.length}`;
-    $('nextBtn').hidden=true; $('hintBtn').disabled=false;
+    if (S.wing===0){ $('roomsBar').innerHTML=''; $('roomCount').textContent='אגף החקירה'; }
+    else { $('roomsBar').innerHTML = S.tasks.map((_,k)=>`<span class="${k<S.ti?'done':k===S.ti?'now':''}"></span>`).join('');
+    $('roomCount').textContent = `חדר ${S.ti+1} מתוך ${S.tasks.length}`; }
+    $('nextBtn').hidden=true;
     $('solved').innerHTML=''; $('extra').innerHTML=''; clearOptions(); setFeedback('', '');
     $('stage').classList.remove('svgstage');
     renderPanel(t); drawStage();
@@ -748,21 +838,15 @@ const ASSET_DECISIONS = [
     const T=$('taskTitle'), X=$('taskText'), plaque=$('plaque');
     plaque.textContent='';
     if (t.type==='cut'){
-      plaque.textContent=`מצולע בעל ${t.n} צלעות`;
+      plaque.textContent = t.drawn ? `מוצג – מצולע בעל ${t.n} צלעות` : `מוצג – מצולע בעל ${t.n} צלעות (לא מצויר)`;
       if (t.phase==='cut'){
         T.textContent='חתכו את המוצג למשולשים';
-        X.innerHTML='גררו מהקודקוד <span class="m">A</span> אל קודקוד אחר כדי למתוח אלכסון. המשיכו עד שכל המצולע מחולק למשולשים.';
+        X.innerHTML='מתחו אלכסונים בין קודקודים – גררו מקודקוד לקודקוד, או לחצו על שני קודקודים. אפשר להתחיל מכל קודקוד. המשיכו עד שכל המוצג מחולק למשולשים.';
       }
       cutGauge(t);
       if (t.phase!=='cut') cutAsk(t);
     }
-    else if (t.type==='pattern'){
-      T.textContent='מה הכלל?'; X.textContent='אלה הממצאים שאספתם. הסתכלו בטבלה: כמה משולשים יתקבלו במצולע בעל 10 צלעות?';
-      setOptions([10,9,8,7], v=>v, (v,b)=>{
-        if (v===8){ lockOptions(b); success('נכון! בכל מצולע מספר המשולשים קטן ב־2 ממספר הצלעות.'); t.step=2; drawStage(); setTimeout(()=>patternStep2(t),50); }
-        else { b.classList.add('wrong'); b.disabled=true; fail(v===10 ? 'בדקו בטבלה: במצולע בעל 4 צלעות היו 4 משולשים?' : 'השוו בכל שורה בין מספר הצלעות למספר המשולשים. בכמה הם שונים?'); }
-      });
-    }
+    else if (t.type==='pattern'){ plaque.textContent='דלת היציאה'; rulePanel(t); }
     else if (t.type==='match'){
       T.textContent='פתחו את הכספות';
       X.textContent = t.mode==='shape' ? 'כל כספת נפתחת בסכום הזוויות של מצולע אחד. גררו כל מצולע אל הכספת שלו.' : 'הפעם אין ציורים – רק מספר הצלעות. גררו כל כרטיס אל הכספת שלו.';
@@ -782,7 +866,7 @@ const ASSET_DECISIONS = [
         const c=t.sum, n=t.n;
         setOptions(nums([c, n*180, (n-1)*180, 360, (n-3)*180].filter(v=>v>0)).slice(0,4).sort((a,b)=>a-b), deg, (v,b)=>{
           if (v===c){ lockOptions(b); success(`נכון! <span class="m">${n} − 2 = ${n-2}</span> משולשים, ולכן <span class="m">${n-2} · 180° = ${c}°</span>.`); t.step=2; setTimeout(()=>missingStep2(t),50); }
-          else { b.classList.add('wrong'); b.disabled=true; fail(v===n*180 ? 'ספרתם משולש לכל צלע? כשחותכים מקודקוד אחד יוצאים פחות משולשים.' : v===360 ? '<span class="m">360°</span> הוא סכום הזוויות במרובע. כמה צלעות יש למוצג הזה?' : 'ספרו את הצלעות וחשבו כמה משולשים יתקבלו.'); }
+          else { b.classList.add('wrong'); b.disabled=true; fail(v===n*180 ? 'ספרתם משולש לכל צלע? חשבו כמה משולשים יוצאים כשחותכים מצולע.' : v===360 ? '<span class="m">360°</span> הוא סכום הזוויות במרובע. כמה צלעות יש למוצג הזה?' : 'ספרו את הצלעות וחשבו כמה משולשים יתקבלו.'); }
         });
       } else missingStep2(t);
     }
@@ -809,48 +893,127 @@ const ASSET_DECISIONS = [
     }
   }
 
-  /* --- אגף 1: חיתוך --- */
-  function cutTriangles(t){
-    const rays=[1, ...[...t.diags].sort((a,b)=>a-b), t.n-1], tris=[];
-    for (let j=0;j<rays.length-1;j++) if (rays[j+1]===rays[j]+1) tris.push(rays[j]);
-    return tris;
+  /* --- מנעול קוד: התשובה נכתבת כקוד שפותח את המנעול --- */
+  function renderLock(label, onTry){
+    $('options').innerHTML = `<div class="lock" id="lock">
+        <div class="lock-art">${padlockSvg(false)}</div>
+        <label class="lock-label" for="lockIn">${label}</label>
+        <div class="lock-row" dir="ltr">
+          <input id="lockIn" class="lock-in" inputmode="numeric" autocomplete="off" maxlength="5" aria-label="קוד המנעול במעלות">
+          <span class="lock-deg">°</span>
+        </div>
+        <button class="btn lock-btn" type="button" id="lockBtn">פתיחת המנעול</button>
+      </div>`;
+    const go=()=>{
+      if (S.failed) return;
+      const raw=String($('lockIn').value).replace(/[^\d]/g,'');
+      if (!raw){ info('הקלידו מספר במנעול.'); $('lockIn').focus(); return; }
+      onTry(parseInt(raw,10));
+    };
+    $('lockBtn').onclick=go;
+    $('lockIn').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); go(); } });
+    $('lockIn').addEventListener('input', ()=>{ $('lock').classList.remove('shake'); });
+  }
+  function lockOpen(){
+    const L=$('lock'); if(!L) return;
+    L.classList.add('open'); L.querySelector('.lock-art').innerHTML=padlockSvg(true);
+    $('lockIn').disabled=true; $('lockBtn').disabled=true;
+  }
+  function lockWrong(){
+    const L=$('lock'); if(!L) return;
+    L.classList.remove('shake'); void L.offsetWidth; L.classList.add('shake');
+    $('lockIn').select();
+  }
+
+  /* --- אגף 1: חיתוך חופשי למשולשים --- */
+  const dkey=(a,b)=> a<b ? `${a}-${b}` : `${b}-${a}`;
+  const dpair=k=> k.split('-').map(Number);
+  // מפרקים את המצולע לחלקים לפי האלכסונים (מצולע קמור)
+  function pieces(t){
+    const out=[];
+    (function split(list){
+      const L=list.length;
+      for (const k of t.diags){
+        const [a,b]=dpair(k), ia=list.indexOf(a), ib=list.indexOf(b);
+        if (ia<0 || ib<0) continue;
+        const gap=Math.abs(ia-ib); if (gap===1 || gap===L-1) continue;
+        const [i,j]=ia<ib?[ia,ib]:[ib,ia];
+        split(list.slice(i,j+1)); split(list.slice(j).concat(list.slice(0,i+1)));
+        return;
+      }
+      out.push(list);
+    })([...Array(t.n).keys()]);
+    return out;
+  }
+  const triangles = t => pieces(t).filter(p=>p.length===3).sort((a,b)=>a.join()<b.join()?-1:1);
+  function crosses(t,a,b){
+    const lo=Math.min(a,b), hi=Math.max(a,b);
+    const inside=x=> x>lo && x<hi;
+    for (const k of t.diags){
+      const [c,d]=dpair(k);
+      if (c===a||c===b||d===a||d===b) continue;
+      if (inside(c)!==inside(d)) return true;
+    }
+    return false;
   }
   function cutGauge(t){
-    const tris=cutTriangles(t);
-    $('extra').innerHTML = `<div class="gauge" aria-live="polite">${ tris.length ? tris.map(a=>`<span class="chip" style="background:${TRI[(a-1)%5].c};color:${TRI[(a-1)%5].t}">180°</span>`).join('') : '<span class="empty">עדיין אין משולשים</span>'}</div>`;
+    if (!t.drawn) { $('extra').innerHTML=''; return; }
+    const tris=triangles(t);
+    const tri=c=>`<svg class="tchip" viewBox="0 0 30 26" aria-hidden="true"><polygon points="15,2 28,24 2,24" fill="${c}" fill-opacity=".95" stroke="#17365e" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
+    $('extra').innerHTML = `<div class="gauge" aria-live="polite">${ tris.length ? tris.map((_,i)=>tri(TRI[i%5].c)).join('') : '<span class="empty">עדיין אין משולשים</span>'}</div>`
+      + (t.phase==='cut' ? `<div class="cut-tools"><span>לחיצה על אלכסון מוחקת אותו.</span>${t.diags.size?'<button class="link-btn" type="button" id="clearCut">ניקוי החיתוך</button>':''}</div>` : '');
+    $('clearCut')?.addEventListener('click', ()=>{ t.diags.clear(); t.sel=null; setFeedback('',''); drawStage(); cutGauge(t); });
   }
-  function tryDiag(t, j){
-    if (t.phase!=='cut') return;
-    const n=t.n;
-    if (j===1 || j===n-1){ info(`<span class="m">A${LETTERS[j]}</span> היא צלע של המצולע, לא אלכסון. בחרו קודקוד שאינו שכן של <span class="m">A</span>.`); return; }
-    if (t.diags.has(j)) return;
-    t.diags.add(j); setFeedback('', ''); drawStage(); cutGauge(t);
-    if (t.diags.size===n-3){ t.phase='ask'; cutAsk(t); drawStage(); }
+  function tryDiag(t, a, b){
+    if (t.phase!=='cut' || a===b) return;
+    const n=t.n, L=x=>LETTERS[x]||'';
+    if ((a-b+n)%n===1 || (b-a+n)%n===1){ info(`<span class="m">${L(Math.min(a,b))}${L(Math.max(a,b))}</span> היא צלע של המצולע. אלכסון מחבר שני קודקודים שאינם שכנים.`); return; }
+    if (t.diags.has(dkey(a,b))) return;
+    if (crosses(t,a,b)){ info('האלכסון הזה חוצה אלכסון שכבר מתחתם. בחרו אלכסון אחר, או לחצו על אלכסון כדי למחוק אותו.'); return; }
+    t.diags.add(dkey(a,b)); setFeedback('', ''); drawStage(); cutGauge(t);
+    if (t.diags.size===n-3){ t.phase='ask'; renderPanel(t); drawStage(); }
   }
+  function removeDiag(t,k){ if (t.phase!=='cut') return; t.diags.delete(k); setFeedback('',''); drawStage(); cutGauge(t); }
+
   function cutAsk(t){
-    const n=t.n, k=n-2, c=k*180;
-    $('taskTitle').textContent='כמה מעלות במצולע?';
-    $('taskText').innerHTML='הזוויות של כל המשולשים יחד ממלאות בדיוק את זוויות המצולע – ראו את הקשתות הצבעוניות. בכל משולש <span class="m">180°</span>.';
-    $('extra').insertAdjacentHTML('beforeend', `<div class="expr">${Array(k).fill('180°').join(' + ')} = ?</div>`);
-    if (t.phase==='done') return;
-    setOptions(nums([c, n*180, (n-1)*180, (n-3)*180, 360].filter(v=>v>0 && v!==c)).slice(0,3).concat(c).sort((a,b)=>a-b), deg, (v,b)=>{
-      if (v===c){ lockOptions(b); t.phase='done'; S.rows.push({n, k, sum:c});
-        success(`נכון! מצולע בעל ${n} צלעות נחתך ל־${k} משולשים, ולכן סכום הזוויות שלו <span class="m">${c}°</span>.`); taskDone(); }
-      else { b.classList.add('wrong'); b.disabled=true; fail(v===n*180 ? 'ספרתם משולש לכל צלע? ספרו רק את המשולשים הצבעוניים.' : 'ספרו שוב את המשולשים הצבעוניים – כל אחד מהם תורם 180°.'); }
+    const n=t.n, c=(n-2)*180;
+    $('taskTitle').textContent = t.drawn ? 'המוצג חתוך למשולשים' : `מצולע בעל ${n} צלעות`;
+    $('taskText').innerHTML = t.drawn
+      ? 'הדלת של החדר נעולה. הקוד הוא סכום הזוויות של המוצג.'
+      : `את המוצג הזה לא מציירים – יש לו ${n} צלעות. הקוד של המנעול הוא סכום הזוויות שלו.`;
+    if (t.phase==='done'){ $('options').innerHTML=`<div class="lock open">${padlockSvg(true)}<div class="lock-code m">${c}°</div></div>`; return; }
+    renderLock('קוד המנעול', v=>{
+      if (v===c){
+        lockOpen(); t.phase='done';
+        success(`המנעול נפתח! סכום הזוויות במצולע בעל ${n} צלעות הוא <span class="m">${c}°</span>.`); taskDone();
+        return;
+      }
+      t.tries++; lockWrong();
+      let msg='המנעול לא נפתח. בדקו את החישוב.';
+      if (v===n*180) msg = t.drawn ? 'המנעול לא נפתח. ספרו שוב את המשולשים בציור.' : 'המנעול לא נפתח. האם במצולע יש משולש לכל צלע? חשבו על המוצגים שחתכתם.';
+      else if (v===360 && n!==4) msg='המנעול לא נפתח. <span class="m">360°</span> מתאים למרובע – כמה צלעות יש למוצג הזה?';
+      if (t.tries>=2) msg += t.drawn ? ' כמה משולשים יש בציור, וכמה מעלות יש בכל משולש?' : ' היעזרו במוצגים שחתכתם: כמה משולשים יצאו בהשוואה למספר הצלעות?';
+      fail(msg);
     });
   }
-  /* --- סיכום הכלל --- */
-  function patternStep2(t){
-    newStep();
-    solvedLine('במצולע בעל 10 צלעות: 8 משולשים');
-    $('taskTitle').textContent='ומה סכום הזוויות?';
-    $('taskText').textContent='מה סכום הזוויות במצולע בעל 10 צלעות?';
-    setFeedback('', '');
-    setOptions([1260,1440,1620,1800], deg, (v,b)=>{
-      if (v===1440){ lockOptions(b); t.step=3; drawStage(); success('גיליתם את הכלל! עכשיו אפשר לחשב סכום זוויות בלי לצייר.'); taskDone(); }
-      else { b.classList.add('wrong'); b.disabled=true; fail(v===1800 ? '1800° זה 10 משולשים. כמה משולשים יש באמת?' : 'כפלו את מספר המשולשים ב־180°.'); }
+
+  /* --- דלת היציאה: הכלל --- */
+  function rulePanel(t){
+    const m=t.m, c=(m-2)*180;
+    $('taskTitle').textContent='דלת היציאה';
+    $('taskText').innerHTML=`על דלת היציאה מנעול. הקוד הוא סכום הזוויות במצולע בעל <b>${m}</b> צלעות – בלי לצייר אותו. היעזרו בממצאים שלכם.`;
+    if (t.step>1){ $('options').innerHTML=`<div class="lock open">${padlockSvg(true)}<div class="lock-code m">${c}°</div></div>`; return; }
+    renderLock('קוד דלת היציאה', v=>{
+      if (v===c){ lockOpen(); t.step=3; drawStage(); success('המנעול נפתח! גיליתם כלל שמתאים לכל מצולע – עכשיו אפשר לחשב סכום זוויות בלי לצייר.'); taskDone(); return; }
+      t.tries++; lockWrong();
+      let msg='המנעול לא נפתח. בדקו את החישוב.';
+      if (v===m*180) msg='המנעול לא נפתח. בדקו בטבלה: האם מספר המשולשים שווה למספר הצלעות?';
+      else if (v%180===0) msg=`המנעול לא נפתח. בדקו בטבלה כמה משולשים יתקבלו במצולע בעל ${m} צלעות.`;
+      if (t.tries>=2) msg+=' השוו בכל שורה בין מספר הצלעות למספר המשולשים.';
+      fail(msg);
     });
   }
+
   /* --- אגף 3: הזווית החסרה --- */
   function missingStep2(t){
     newStep();
@@ -892,21 +1055,6 @@ const ASSET_DECISIONS = [
     } else fail(`עדיין לא. ${wrong.length===1?'כספת אחת מסומנת':`${wrong.length} כספות מסומנות`} במסגרת בורדו – בדקו אותן שוב.`);
   }
 
-  function hintFor(t){
-    if (t.type==='cut') return t.phase==='cut'
-      ? `אלכסון מחבר שני קודקודים שאינם שכנים. מ־<span class="m">A</span> אפשר למתוח אלכסון לכל קודקוד חוץ מ־<span class="m">B</span> ומ־<span class="m">${LETTERS[t.n-1]}</span>.`
-      : 'ספרו את המשולשים הצבעוניים וכפלו ב־180°.';
-    if (t.type==='pattern') return t.step===1 ? 'בשורה הראשונה: 4 צלעות ו־2 משולשים. בשנייה: 5 צלעות ו־3 משולשים. מה קורה בכל פעם?' : '8 משולשים, ובכל אחד 180°.';
-    if (t.type==='match') return 'ספרו את הצלעות והורידו 2 – זה מספר המשולשים. כפלו אותו ב־180°.';
-    if (t.type==='trap') return 'סכום הזוויות הוא תמיד 180° כפול מספר המשולשים, כלומר מספר שמתחלק ב־180 בלי שארית.';
-    if (t.type==='missing') return t.step===1
-      ? 'חתכנו בשבילכם את המוצג למשולשים מקודקוד אחד. ספרו את המשולשים.'
-      : `<div>מורידים מהסכום את כל הזוויות הידועות:</div><div class="expr">${t.sum}° − (${t.vals.filter((_,i)=>i!==t.miss).map(v=>v+'°').join(' + ')}) = ?</div>`;
-    if (t.type==='regular') return t.step===1 ? 'ספרו צלעות, הורידו 2 וכפלו ב־180°.' : 'מחלקים את סכום הזוויות במספר הזוויות – הוא שווה למספר הצלעות.';
-    if (t.type==='reverse') return 'נסו כל אפשרות: חשבו את סכום הזוויות של המצולע וחלקו אותו במספר הצלעות. איזו אפשרות נותנת את הזווית הנכונה?';
-    return '';
-  }
-
   /* ---------- ציור הבמה ---------- */
   function drawStage(){
     const t=cur(); if(!t) return;
@@ -914,65 +1062,92 @@ const ASSET_DECISIONS = [
   }
 
   function drawCut(t){
-    const {s,W,H,pad}=newSvg(); const P=fit(t.base,W,H,pad); t.P=P;
-    const rS=clamp(Math.min(W,H)*.07,22,34);
+    const {s,W,H,pad}=newSvg();
+    const P=fit(t.base,W,H,pad); t.P=P;
+    if (!t.drawn){
+      // מצולע גדול: מציגים רק קווי מתאר, בלי קודקודים לחיתוך
+      el('polygon',{points:ptsStr(P), fill:'#fff', stroke:'#17365e', 'stroke-width':2.2, 'stroke-linejoin':'round'}, s);
+      text(s, W/2, H/2, `${t.n}`, 'bigq');
+      return;
+    }
+    const rS=clamp(Math.min(W,H)*.06,16,30);
     el('polygon',{points:ptsStr(P), fill:'#fff'}, s);
-    cutTriangles(t).forEach(a=>{
-      const tri=[P[0],P[a],P[a+1]], col=TRI[(a-1)%5].c;
-      el('polygon',{points:ptsStr(tri), fill:col, 'fill-opacity':.16}, s);
-      tri.forEach((V,i)=>{ const g=angAt(tri,i); el('path',{d:sectorD(V,rS,g.start,g.size), fill:col, 'fill-opacity':.6}, s); });
+    triangles(t).forEach((tri,ti)=>{
+      const Q=tri.map(i=>P[i]), col=TRI[ti%5].c;
+      el('polygon',{points:ptsStr(Q), fill:col, 'fill-opacity':.16}, s);
+      const O=orient(Q); O.forEach((V,i)=>{ const g=angAt(O,i); el('path',{d:sectorD(V,rS,g.start,g.size), fill:col, 'fill-opacity':.6}, s); });
     });
-    t.diags.forEach(j=> el('line',{x1:P[0].x, y1:P[0].y, x2:P[j].x, y2:P[j].y, stroke:'#17365e', 'stroke-width':2, 'stroke-linecap':'round'}, s));
+    t.diagEls=[];
+    t.diags.forEach(k=>{
+      const [a,b]=dpair(k);
+      el('line',{x1:P[a].x, y1:P[a].y, x2:P[b].x, y2:P[b].y, stroke:'#17365e', 'stroke-width':2, 'stroke-linecap':'round'}, s);
+    });
     el('polygon',{points:ptsStr(P), fill:'none', stroke:'#17365e', 'stroke-width':2.4, 'stroke-linejoin':'round'}, s);
     t.dragLine=el('line',{stroke:'#832058', 'stroke-width':2, 'stroke-dasharray':'6 6', 'stroke-linecap':'round', visibility:'hidden'}, s);
     const active=t.phase==='cut';
     P.forEach((V,i)=>{
-      const g=point(s, V, i===0?'#832058':'#17365e', {cls: active?'vtx':null, pulse: active && i===0 && t.diags.size===0});
+      const g=point(s, V, t.sel===i ? '#6db580' : '#832058', {cls: active?'vtx':null, pulse: active && t.diags.size===0 && t.sel===null && i===0});
       if (active){ g.setAttribute('tabindex','0'); g.setAttribute('role','button'); g.dataset.i=i;
-        g.setAttribute('aria-label', i===0 ? 'קודקוד A – ממנו יוצאים האלכסונים' : `קודקוד ${LETTERS[i]} – מתיחת אלכסון מ־A`); }
+        g.setAttribute('aria-label', t.sel===null ? `קודקוד ${LETTERS[i]} – בחירה כתחילת אלכסון` : t.sel===i ? `קודקוד ${LETTERS[i]} – נבחר` : `קודקוד ${LETTERS[i]} – מתיחת אלכסון מ־${LETTERS[t.sel]}`); }
     });
     letters(s,P);
     if (active) attachCut(s,t);
   }
+  function segDist(p,A,B){
+    const dx=B.x-A.x, dy=B.y-A.y, L=dx*dx+dy*dy; let u=((p.x-A.x)*dx+(p.y-A.y)*dy)/L; u=clamp(u,0,1);
+    return Math.hypot(p.x-(A.x+u*dx), p.y-(A.y+u*dy));
+  }
   function attachCut(s,t){
     let drag=null;
     const pt=e=>{ const r=s.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; };
-    const hit=p=>{ let best=-1, bd=26; t.P.forEach((V,i)=>{ const d=dist(V,p); if(d<bd){ bd=d; best=i; } }); return best; };
+    const hit=p=>{ let best=-1, bd=24; t.P.forEach((V,i)=>{ const d=dist(V,p); if(d<bd){ bd=d; best=i; } }); return best; };
+    const diagAt=p=>{ for (const k of t.diags){ const [a,b]=dpair(k); if (segDist(p,t.P[a],t.P[b])<10) return k; } return null; };
+    const clickVertex=i=>{
+      if (t.sel===null){ t.sel=i; drawStage(); }
+      else if (t.sel===i){ t.sel=null; drawStage(); }
+      else { const a=t.sel; t.sel=null; tryDiag(t,a,i); if (t.phase==='cut') drawStage(); }
+      $('stage').querySelector(`.vtx[data-i="${i}"]`)?.focus({preventScroll:true});
+    };
     s.addEventListener('pointerdown', e=>{
       if (S.failed) return;
-      const i=hit(pt(e)); if(i<0) return;
-      e.preventDefault(); s.setPointerCapture(e.pointerId); drag={from:i}; s.style.cursor='grabbing';
+      const p=pt(e), i=hit(p);
+      if (i<0){ const k=diagAt(p); if (k) removeDiag(t,k); return; }
+      e.preventDefault(); s.setPointerCapture(e.pointerId); drag={from:i, moved:false, p0:p}; s.style.cursor='grabbing';
     });
     s.addEventListener('pointermove', e=>{
       const p=pt(e);
-      if (!drag){ s.style.cursor = hit(p)>=0 ? 'grab' : 'default'; return; }
+      if (!drag){ s.style.cursor = hit(p)>=0 ? 'grab' : diagAt(p) ? 'pointer' : 'default'; return; }
+      if (!drag.moved && dist(p,drag.p0)<8) return;
+      drag.moved=true;
       const F=t.P[drag.from], L=t.dragLine;
       L.setAttribute('x1',F.x); L.setAttribute('y1',F.y); L.setAttribute('x2',p.x); L.setAttribute('y2',p.y); L.setAttribute('visibility','visible');
     });
     const end = e=>{
       if (!drag) return;
-      const from=drag.from, to=e.type==='pointercancel'?-1:hit(pt(e)); drag=null;
+      const {from,moved}=drag; drag=null;
       t.dragLine.setAttribute('visibility','hidden'); s.style.cursor='default';
       if (e.type==='pointercancel') return;
-      if (to<0 || to===from){ if (from!==0) tryDiag(t,from); else info('גררו מהקודקוד <span class="m">A</span> אל קודקוד אחר.'); return; }
-      if (from===0) tryDiag(t,to); else if (to===0) tryDiag(t,from);
-      else info('כל האלכסונים יוצאים מאותו קודקוד – מהקודקוד <span class="m">A</span>.');
+      if (!moved){ clickVertex(from); return; }
+      const to=hit(pt(e));
+      if (to<0 || to===from) return;
+      t.sel=null; tryDiag(t,from,to);
     };
     s.addEventListener('pointerup', end); s.addEventListener('pointercancel', end);
     s.querySelectorAll('.vtx').forEach(g=> g.addEventListener('keydown', e=>{
-      if (e.key!=='Enter' && e.key!==' ') return; e.preventDefault();
-      const i=+g.dataset.i; if (i===0) info('בחרו קודקוד אחר – האלכסון יימתח אליו מ־<span class="m">A</span>.'); else { tryDiag(t,i); $('stage').querySelector(`.vtx[data-i="${i}"]`)?.focus(); }
+      if (e.key!=='Enter' && e.key!==' ') return; e.preventDefault(); clickVertex(+g.dataset.i);
     }));
   }
 
   function drawPattern(t){
     const st=$('stage'); st.classList.remove('svgstage');
-    const rows=S.rows.slice().sort((a,b)=>a.n-b.n);
+    const rows=hallDone().slice().sort((a,b)=>a.n-b.n);
+    const done=t.step>1, c=(t.m-2)*180;
     st.innerHTML = `<div class="log">
+      <div class="log-title">הממצאים שלכם</div>
       <table class="dtable"><thead><tr><th scope="col">מספר הצלעות</th><th scope="col">מספר המשולשים</th><th scope="col">סכום הזוויות</th></tr></thead>
-      <tbody>${rows.map(r=>`<tr><td>${r.n}</td><td>${r.k}</td><td><span class="m">${r.sum}°</span></td></tr>`).join('')}
-      <tr class="q"><td>10</td><td class="${t.step>1?'':'ask'}">${t.step>1?8:'?'}</td><td class="${t.step>2?'':'ask'}">${t.step>2?'<span class="m">1440°</span>':'?'}</td></tr></tbody></table>
-      ${t.step>2 ? `<div class="rule"><div class="t">סכום הזוויות במצולע</div><div class="f">(<i>n</i> − 2) · 180°</div><div class="s"><span class="m"><i>n</i></span> – מספר הצלעות</div></div>` : ''}
+      <tbody>${rows.map(r=>`<tr><td>${r.n}</td><td>${r.drawn?r.n-2:'–'}</td><td><span class="m">${(r.n-2)*180}°</span></td></tr>`).join('')}
+      <tr class="q"><td>${t.m}</td><td class="${done?'':'ask'}">${done?t.m-2:'?'}</td><td class="${done?'':'ask'}">${done?`<span class="m">${c}°</span>`:'?'}</td></tr></tbody></table>
+      ${done ? `<div class="rule"><div class="t">סכום הזוויות במצולע</div><div class="f">(<i>n</i> − 2) · 180°</div><div class="s"><span class="m"><i>n</i></span> – מספר הצלעות</div></div>` : ''}
     </div>`;
   }
 
@@ -1023,7 +1198,7 @@ const ASSET_DECISIONS = [
     t.sel=null;
     if (cardKey===safeKey){
       t.placed.add(cardKey); drawMatch(t);
-      success(it.n===3 ? 'נכון! משולש הוא כבר משולש אחד, ולכן סכום הזוויות שלו <span class="m">180°</span>.' : `נכון! <span class="m">${it.n} − 2 = ${it.n-2}</span> משולשים, ו־<span class="m">${it.n-2} · 180° = ${it.key}°</span>.`, !t.mist.has(cardKey) && !S.stepHint);
+      success(it.n===3 ? 'נכון! משולש הוא כבר משולש אחד, ולכן סכום הזוויות שלו <span class="m">180°</span>.' : `נכון! <span class="m">${it.n} − 2 = ${it.n-2}</span> משולשים, ו־<span class="m">${it.n-2} · 180° = ${it.key}°</span>.`, !t.mist.has(cardKey));
       if (t.placed.size===t.items.length) taskDone();
     } else {
       t.mist.add(cardKey); drawMatch(t);
@@ -1045,11 +1220,6 @@ const ASSET_DECISIONS = [
   function drawMissing(t){
     const {s,W,H,pad,rA}=newSvg(); const P=fit(t.base,W,H,pad);
     el('polygon',{points:ptsStr(P), fill:'#fff'}, s);
-    if (t.showFan && !t.done){
-      const f=t.fanFrom, n=t.n;
-      for (let j=0;j<n;j++){ if (j===f || j===(f+1)%n || j===(f-1+n)%n) continue;
-        el('line',{x1:P[f].x, y1:P[f].y, x2:P[j].x, y2:P[j].y, stroke:'#832058', 'stroke-width':1.8, 'stroke-dasharray':'6 6', 'stroke-linecap':'round', opacity:.8}, s); }
-    }
     el('polygon',{points:ptsStr(P), fill:'none', stroke:'#17365e', 'stroke-width':2.4, 'stroke-linejoin':'round'}, s);
     P.forEach((_,i)=>{
       const miss = i===t.miss && !t.done;
@@ -1105,7 +1275,7 @@ const ASSET_DECISIONS = [
   updateStats();
 
   // לבדיקות אוטומטיות בלבד
-  window.__angleThief = { get S(){ return S; }, enterWing, startGame, drawStage };
+  window.__angleThief = { get S(){ return S; }, enterWing, startGame, drawStage, showHall, enterRoom, tryDiag, triangles, cur:()=>S&&S.tasks[S.ti] };
 })();
 </script>
 </body>
